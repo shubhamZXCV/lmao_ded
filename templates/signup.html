@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="{{url_for('static',filename='signup.css')}}">
+    <script src="{{ url_for('static', filename='login.js') }}"></script>
+ 
+</head>
+
+<body>
+   
+    <div id="slideshow">
+
+         <img src="static/Assets/Images/slide1.jpeg" class="img">
+        <img src="static/Assets/Images/slide2.jpeg" class="img">
+        <img src="static/Assets/Images/slide3.jpeg" class="img">
+        <img src="static/Assets/Images/slide4.jpeg" class="img">
+        <img src="static/Assets/Images/slide5.jpeg" class="img">
+        <img src="static/Assets/Images/slide6.jpeg" class="img">
+        <img src="static/Assets/Images/slide7.jpeg" class="img">
+        <img src="static/Assets/Images/slide8.jpeg" class="img">
+    </div>
+    <div class="content">
+        <div class="logo">&#169;Lmao_ded</div>
+
+        <div class="greet">
+            <h3>Hey there! Welcome</h3>
+            <span>Create an account to proceed</span>
+        </div>
+
+        <div class="log">
+            <form action="{{ url_for('register') }}"  method="post">
+                <div class="message">{{ msg }}</div>
+                <div>
+                    <label for="name" class="labelAboveFilling">Full Name</label><br>
+                    <input type="text" id="name" name="name" placeholder="Enter your name"><br>
+                </div>
+
+                <div>
+                    <label for="email" class="labelAboveFilling">Email</label><br>
+                    <input type="text" id="email" name="email" placeholder="Enter your email"><br>
+                </div>
+
+                <div>
+                    <label for="pass" class="labelAboveFilling">Password</label><br>
+                    <input type="password" id="pass" name="password" placeholder="Create your password">
+                </div>
+
+              
+
+                <input type="submit" value="Sign Up" id="submit">
+
+                <div class="footer">
+                    <b><a id="linkToLogin" href="
+                        <p class="bottom">Already have an account?  <a class="bottom" href="{{url_for('login')}}"> Log in</a></b>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>

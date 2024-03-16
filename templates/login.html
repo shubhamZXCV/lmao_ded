@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+    <script src="{{url_for('static',filename='login.js')}}"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;1,500&display=swap');
+      </style>
+</head>
+
+<body>
+ </div>
+
+    <div id="slideshow">
+        <!-- <div class="slideshow-text">Turn Your<br>Clicks Into <br> Memories</div> -->
+        <!-- <span clss="text">turn your</span> -->
+        <img src="static/Assets/Images/slide1.jpeg" class="img">
+        <img src="static/Assets/Images/slide2.jpeg" class="img">
+        <img src="static/Assets/Images/slide3.jpeg" class="img">
+        <img src="static/Assets/Images/slide4.jpeg" class="img">
+        <img src="static/Assets/Images/slide5.jpeg" class="img">
+        <img src="static/Assets/Images/slide6.jpeg" class="img">
+        <img src="static/Assets/Images/slide7.jpeg" class="img">
+        <img src="static/Assets/Images/slide8.jpeg" class="img">
+        
+        <!-- Add more images as needed -->
+    </div>
+    
+    <div class="content">
+        <div class="logo">&#169;Lmao_ded</div>
+
+        <div class="greet">
+            <h3>Welcome Back</h3>
+            <span>Enter your email and password to access your account</span>
+        </div>
+
+        <div class="log">
+            <form action="{{url_for('login')}}" method="post">
+                <div class="message">
+                    {{msg}}
+                </div>
+                <div>
+                    <label for="email" class="labelAboveFilling">Email</label><br>
+                    <input type="text" id="email" name="email" placeholder="Enter your email"><br>
+                </div>
+
+                <div>
+                    <label for="pass" class="labelAboveFilling">Password</label><br>
+                    <input type="password" id="pass" name="password" placeholder="Enter your password">
+                </div>
+
+               
+                <input type="submit" value="Log In" id="submit">
+
+                <div class="footer">
+                    Dont't have an account?<b><a id="linkToLogin" href="{{url_for('register')}}"> Sign Up</a></b>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>

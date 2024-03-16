@@ -1,0 +1,124 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+   {% for user in user_data %}
+   <div>
+    <div>{{ user[0] }}</div>
+    <div>{{ user[1] }}</div>
+    <div>{{ user[2] }}</div>
+   </div>
+   {% endfor %}
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin</title>
+    <style>
+        body{
+           background-color: rgb(34, 45, 52);
+            box-sizing: border-box;
+            height:100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        #stats{
+          
+          display: flex;
+          justify-content: space-evenly;
+          align-items: center;
+          /* background-color: blue; */
+          width:70vw;
+          height: 25vh;
+        }
+        
+        .stat{
+          box-sizing: border-box;
+          border:2px solid rgb(0, 168, 132);
+          font-size:3rem;
+          border-radius:23px;
+          display: flex;
+          align-items: center;
+          justify-content: space-evenly;
+            background-color: rgb(17, 27, 33);
+            width:20%;
+            height: 80%;
+           color: rgb(0, 168, 132);
+        }
+
+        .stat-head{
+          font-size:1rem;
+        }
+
+        #main{
+            /* color:white; */
+            overflow:auto;
+            /* background-color: black; */
+            height:60vh;
+            width:70vw;
+        }
+
+        .user{
+            background-color: blueviolet;
+            height:7.5%;
+            width:80%;
+        }
+
+        th,td{
+           padding:1rem;
+            color:white;
+            border:1px solid #222d34;
+            background-color: rgb(17, 27, 33);
+        }
+
+        table{
+            width:100%;
+            
+        }
+
+
+    </style>
+</head>
+<body>
+    <div id="stats">
+      
+        <div class="stat">
+          <div class="stat-head">
+            Loyal Users
+          </div>
+          {{user_num[0][0]}}</div>
+        <div class="stat"><div class="stat-head">
+           Images Uploaded
+        </div>{{image_num[0][0]}}</div>
+
+    </div>
+    <div id="main">
+        <table>
+            <tr>
+             
+                <th>User Id</th>
+                <th>User Name</th>
+                <th>User Email</th>
+            </tr>
+            {% for user in user_data %}
+            <tr>
+                <td>{{user[0]}}</td>
+                <td>{{user[1]}}</td>
+                <td>{{user[2]}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+    </div>
+</body>
+</html>

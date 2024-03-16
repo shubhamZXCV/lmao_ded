@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+        <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+    <!-- <script src="{{url_for('static',filename='')}}"></script> -->
+
+</head>
+
+<body>
+    <div class="main_heading">
+        <h1>Turn your <i>clicks</i> into <i>memories</i></h1>
+        <p>with audios, transitions and much more!</p>
+        <div class="buttons-container">
+            <a href="{{url_for('login')}}"><button class="button-arounder">login</button></a>
+           <a href="{{url_for('register')}}"><button class="button-arounder">signup</button></a> 
+            <a href="{{url_for('admin')}}"><button class ="button-arounder">Admin</button></a>
+        </div>
+    </div>
+
+    <div class="open_laptop">
+        <img src="/static/Assets/Images/open_laptop3.png" alt="an open laptop" width="100%">
+    </div>
+    <div>
+        <p id="copyright"> &#169; lmao_ded</p>
+    </div>
+</body>
+
+</html>
