@@ -2,7 +2,7 @@ from flask import Flask,render_template,request,session,redirect,url_for,jsonify
 # from flask_mysqldb import MySQL
 # import MySQLdb.cursors
 import re,os
-from moviepy.editor import ImageSequenceClip, AudioFileClip
+from moviepy.editor import ImageSequenceClip, AudioFileClip,concatenate_videoclips
 from PIL import Image
 import os
 # from sqlalchemy import create_engine, text
@@ -241,63 +241,61 @@ def admin():
     cursor.close()
     return render_template('admin.html',user_data=user_data,user_num=user_num,image_num=image_num)
 
-@app.route('/createVideo',methods=['POST','GET'])
+from moviepy.editor import ImageSequenceClip, concatenate_videoclips, AudioFileClip
+from PIL import Image
+import os
+
+@app.route('/createVideo', methods=['POST', 'GET'])
 def createVideo():
-    # if request.method=="POST":
-    #     return request.form
-    
     image_folder = f"static/uploads/{session['name']}"
     video_path = f"static/uploads/{session['name']}/video.mp4"
-    music_path=""
-    if request.method=='POST' and 'backgroundMusic' in request.form:
-        music_path =request.form['backgroundMusic']   # Path to your background music file
-    fps=1
+    music_path = ""
+    transition = "crossfade"  # Default transition
+    fps = 1
+
+    if request.method == 'POST' and 'backgroundMusic' in request.form:
+        music_path = request.form['backgroundMusic']
+        transition = request.form['transition']
+    print(transition)
 
     video_data = request.form.to_dict()
     del video_data['backgroundMusic']
+    del video_data['transition']
 
-    durations = []  # Example durations for each image
+    durations = []
     for key in sorted(video_data.keys()):
-    # Convert the value to an integer and append it to the list
         durations.append(int(video_data[key]))
 
     images = [img for img in os.listdir(image_folder) if img.endswith(".png") or img.endswith(".jpg") or img.endswith(".jpeg")]
 
-    # Resize and save images
     for image in [os.path.join(image_folder, img) for img in images]:
         img = Image.open(image)
         resized_img = img.resize((WIDTH, HEIGHT))
         resized_img.save(image)
 
-    # Create a list of images with specified durations
-    extended_images = []
+    extended_clips = []
     for img, duration in zip(images, durations):
-        for _ in range(duration * fps):
-            extended_images.append(os.path.join(image_folder, img))
+        img_clip = ImageSequenceClip([os.path.join(image_folder, img)], fps=fps)
+        extended_clips.append(img_clip.set_duration(duration))
 
-    # Create ImageSequenceClip from the extended list of images
-    clip = ImageSequenceClip(extended_images, fps=fps)
+    # Apply transitions between clips
+    if transition == "crossfade":
+        final_clip = concatenate_videoclips(extended_clips, method="chain")
+    elif transition == "slide":
+        final_clip = concatenate_videoclips(extended_clips, method="compose")
+    else:
+        final_clip = concatenate_videoclips(extended_clips, method="chain")
 
-    if music_path!='None':
-
-
-    # Load the background music
+    if music_path != '':
         audio_clip = AudioFileClip(music_path)
-
         total_duration = sum(durations)
-
-     # Trim the audio clip to match the total duration of the images
         audio_clip = audio_clip.subclip(0, total_duration)
+        final_clip = final_clip.set_audio(audio_clip)
 
-    # Set the background music
-        clip = clip.set_audio(audio_clip)
+    final_clip.write_videofile(video_path)
 
-    # Write the video file
-    clip.write_videofile(video_path)
-    # print(video_path)
-    # return redirect(url_for('workarea',video_path=video_path))
-    print(music_path)
-    return render_template('workArea.html',video_path=video_path,name=session['name'])
+    return render_template('workArea.html', video_path=video_path, name=session['name'])
+
 
 @app.route('/downloadVideo')
 def downloadVideo():

@@ -104,7 +104,7 @@
                                         
                 <div class="st-op">
                     <img src="{{ url_for('static', filename=path_string) }}" alt="">
-                    <input type="number" name="{{ loop.index }}" id="">
+                    <input type="number" name="{{ loop.index }}" id="" required>
                 </div>
             {% endfor %}
             
@@ -113,32 +113,32 @@
               <div id="music" class="setting" onclick="toggleMusicOptions()">Music <span>+</span></div>
             <div id="music-option" class="hidden">
                 <div class="mus-option">
-                  <input type="radio" name="backgroundMusic" id="" value="static/Assets/audio/sunrise-bliss.mp3">
+                  <input type="radio" name="backgroundMusic" id="" value="static/Assets/audio/sunrise-bliss.mp3" >
                   <span>sunrise-bliss</span>
                   <img src="static/Assets/Images/music3.png" alt="" onclick="toggleMusic('sunrise-bliss.mp3')">
                 </div>
                 <div class="mus-option">
-                  <input type="radio" name="backgroundMusic" id="" value="static/Assets/audio/simple-piano.mp3">
+                  <input type="radio" name="backgroundMusic" id="" value="static/Assets/audio/simple-piano.mp3" required>
                   <span>simple-piano</span>
                   <img src="static/Assets/Images/music3.png" alt="" onclick="toggleMusic('simple-piano.mp3')">
                 </div>
                 <div class="mus-option">
-                  <input type="radio" name="backgroundMusic" id="" value="static/Assets/audio/rickroll.MP3">
+                  <input type="radio" name="backgroundMusic" id="" value="static/Assets/audio/rickroll.MP3" required>
                   <span>rickroll</span>
                   <img src="static/Assets/Images/music3.png" alt="" onclick="toggleMusic('rickroll.MP3')">
                 </div>
                 <div class="mus-option">
-                  <input type="radio" name="backgroundMusic" id="" value="static/Assets/audio/On-and-On.mp3">
+                  <input type="radio" name="backgroundMusic" id="" value="static/Assets/audio/On-and-On.mp3" required>
                   <span>On-and-On</span>
                   <img src="static/Assets/Images/music3.png" alt="" onclick="toggleMusic('On-and-On.mp3')">
                 </div>
                 <div class="mus-option">
-                  <input type="radio" name="backgroundMusic" id="" value="static/Assets/audio/Counting Stars - OneRepublic.mp3">
+                  <input type="radio" name="backgroundMusic" id="" value="static/Assets/audio/Counting Stars - OneRepublic.mp3" required>
                   <span>Counting Stars - OneRepublic</span>
                   <img src="static/Assets/Images/music3.png" alt="" onclick="toggleMusic('Counting Stars - OneRepublic.mp3')">
                 </div>
                 <div class="mus-option">
-                  <input type="radio" name="backgroundMusic" id="" value="None">
+                  <input type="radio" name="backgroundMusic" id="" value="None" required>
                   <span>None</span>
                   <img src="static/Assets/Images/music3.png" alt="" >
                 </div>
@@ -147,20 +147,40 @@
             <div id="transition-option" class="hidden">
                   <div class="trans-option">
                       <img src="static/Assets/Images/trans.png" alt="">
-                      <span>transition1</span>
-                  </div>
-                  <div class="trans-option">
+                      <span>crossfade</span>
+                      <input type="radio" name="transition" id="" value="crossfade" required>
+                    </div>
+                    <div class="trans-option">
                       <img src="static/Assets/Images/trans.png" alt="">
-                      <span>transition1</span>
-                  </div>
-                  <div class="trans-option">
+                      <span>slide</span>
+                      <input type="radio" name="transition" id="" value="slide" required>
+                    </div>
+                    <!-- <div class="trans-option">
                       <img src="static/Assets/Images/trans.png" alt="">
-                      <span>transition1</span>
+                      <span>crossfadeout</span>
+                      <input type="radio" name="transition" id="" value="crossfadeout">
                   </div>
-                  <div class="trans-option">
+                    <div class="trans-option">
                       <img src="static/Assets/Images/trans.png" alt="">
-                      <span>transition1</span>
+                      <span>slidein</span>
+                      <input type="radio" name="transition" id="" value="slidein">
                   </div>
+                    <div class="trans-option">
+                      <img src="static/Assets/Images/trans.png" alt="">
+                      <span>slideout</span>
+                      <input type="radio" name="transition" id="" value="slideout">
+                  </div>
+                    <div class="trans-option">
+                      <img src="static/Assets/Images/trans.png" alt="">
+                      <span>dull</span>
+                      <input type="radio" name="transition" id="" value="dull">
+                  </div> -->
+                    <div class="trans-option">
+                      <img src="static/Assets/Images/trans.png" alt="">
+                      <span>none</span>
+                      <input type="radio" name="transition" id="" value="none">
+                  </div>
+                  
             </div>
             <div id="resolution" class="setting" onclick="viewResolution()">Resolution <span>+</span></div>
             <div id="resolution-option" class="hidden">
