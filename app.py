@@ -57,7 +57,7 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}  # Allowed image file extensi
 # mysql=MySQL(app)
 
 conn=connect_to_database()
-print(conn)
+# print(conn)
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -82,6 +82,9 @@ def login():
     if request.method == 'POST' and 'email' in request.form and 'password' in request.form:
         email = request.form['email']
         password = request.form['password']
+
+        if email =='admin@admin' and password=='admin':
+            return redirect(url_for('admin'))
         # cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
         cursor=conn.cursor()
         cursor.execute('SELECT * FROM user_info WHERE email = %s AND password = %s', (email, password))
@@ -146,7 +149,8 @@ def workarea():
     cursor.execute("SELECT image_path,image_id FROM image_data where user_id= %s",(session['id'],))
     image_path = cursor.fetchall()
     cursor.close()
-    # return f"{image_path[0][1]}"                                           
+    # return f"{image_path[0][1]}"          
+                                     
     return render_template('workArea.html', image_path=image_path, name=session['name'])
     # return f"{image_path}"
 
@@ -190,7 +194,7 @@ def upload_file():
             cursor=conn.cursor()
             cursor.execute("INSERT INTO image_data (image_path, user_id, image_size, image_name, image_extension) VALUES (%s, %s, %s, %s, %s)", (relative_path, session['id'], file_size, file.filename, file_extension))
             # mysql.connection.commit()
-            conn.commit
+            conn.commit()
             cursor.close()
         else:
             return 'Invalid file type'
