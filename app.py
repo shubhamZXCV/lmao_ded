@@ -5,6 +5,7 @@ import re,os
 from moviepy.editor import ImageSequenceClip, AudioFileClip,concatenate_videoclips
 from PIL import Image
 import os
+from maker import images_to_video
 # from sqlalchemy import create_engine, text
 import psycopg2
 # conn = psycopg2.connect(os.environ["DATABASE_URL"])
@@ -247,13 +248,14 @@ import os
 
 @app.route('/createVideo', methods=['POST', 'GET'])
 def createVideo():
+    # return request.form;
     image_folder = f"static/uploads/{session['name']}"
     video_path = f"static/uploads/{session['name']}/video.mp4"
     music_path = ""
-    transition = "crossfade"  # Default transition
-    fps = 1
-
-    if request.method == 'POST' and 'backgroundMusic' in request.form:
+    # transition = "crossfade"  # Default transition
+    fps = 10
+    transition='none'
+    if request.method == 'POST':
         music_path = request.form['backgroundMusic']
         transition = request.form['transition']
     print(transition)
@@ -262,38 +264,38 @@ def createVideo():
     del video_data['backgroundMusic']
     del video_data['transition']
 
+    images = [os.path.join(image_folder, img) for img in os.listdir(image_folder) if img.endswith(".png") or img.endswith(".jpg") or img.endswith(".jpeg")]
+
     durations = []
     for key in sorted(video_data.keys()):
         durations.append(int(video_data[key]))
+    transition_array=0;
+    if transition=='none':
+        transition_array=[0] * (len(images)-1)
+    if transition=='crossFade':
+        transition_array=[1] * (len(images)-1)
+    if transition=='slideInLeft':
+        transition_array=[2] * (len(images)-1)
+    if transition=='slideInRight':
+        transition_array=[3] * (len(images)-1)
+    if transition=='slideInTop':
+        transition_array=[4] * (len(images)-1)
+    if transition=='slideInBottom':
+        transition_array=[5] * (len(images)-1)
+    
 
-    images = [img for img in os.listdir(image_folder) if img.endswith(".png") or img.endswith(".jpg") or img.endswith(".jpeg")]
 
-    for image in [os.path.join(image_folder, img) for img in images]:
-        img = Image.open(image)
-        resized_img = img.resize((WIDTH, HEIGHT))
-        resized_img.save(image)
+    # print(images)
+    # return images
 
-    extended_clips = []
-    for img, duration in zip(images, durations):
-        img_clip = ImageSequenceClip([os.path.join(image_folder, img)], fps=fps)
-        extended_clips.append(img_clip.set_duration(duration))
+    
+    
 
-    # Apply transitions between clips
-    if transition == "crossfade":
-        final_clip = concatenate_videoclips(extended_clips, method="chain")
-    elif transition == "slide":
-        final_clip = concatenate_videoclips(extended_clips, method="compose")
-    else:
-        final_clip = concatenate_videoclips(extended_clips, method="chain")
+    print(transition_array)
 
-    if music_path != '':
-        audio_clip = AudioFileClip(music_path)
-        total_duration = sum(durations)
-        audio_clip = audio_clip.subclip(0, total_duration)
-        final_clip = final_clip.set_audio(audio_clip)
+    images_to_video(images, video_path, durations, transition_array, music_path, fps=10)
 
-    final_clip.write_videofile(video_path)
-
+   
     return render_template('workArea.html', video_path=video_path, name=session['name'])
 
 

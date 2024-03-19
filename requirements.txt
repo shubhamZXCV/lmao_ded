@@ -15,7 +15,7 @@ imageio-ffmpeg==0.4.9
 itsdangerous==2.1.2
 Jinja2==3.1.3
 MarkupSafe==2.1.5
-moviepy==1.0.3
+moviepy @ git+https://github.com/Zulko/moviepy.git@bc8d1a831d2d1f61abfdf1779e8df95d523947a5
 mysqlclient==2.2.4
 numpy==1.26.4
 opencv-python==4.9.0.80
