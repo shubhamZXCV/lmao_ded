@@ -1,8 +1,16 @@
+# important note , dont use IIIT network while using this app , coakroaching db doesnt work :(
+
+
+
+
+
 from flask import Flask,render_template,request,session,redirect,url_for,jsonify,send_file
 # from flask_mysqldb import MySQL
 # import MySQLdb.cursors
 import re,os
-from moviepy.editor import ImageSequenceClip, AudioFileClip,concatenate_videoclips
+# from moviepy.editor import ImageSequenceClip, AudioFileClip,concatenate_videoclips
+from moviepy import ImageSequenceClip, AudioFileClip, concatenate_videoclips
+
 from PIL import Image
 import os
 from maker import images_to_video
@@ -15,11 +23,12 @@ def connect_to_database():
         'host': 'cross-phoenix-8908.8nk.gcp-asia-southeast1.cockroachlabs.cloud',
         'port': 26257,
         'user': 'shubham',
-        'password': 'M9N5abn1L4MqemR-fg7-zQ',
+        'password': 'CTVU2I4VrTxuEDNmOyhFIQ',
         'database': 'user_database',
         'sslmode': 'verify-full',
         'sslrootcert': 'root.crt' # Replace with the correct path
     }
+
 
     conn_str = "host={host} port={port} user={user} password={password} dbname={database} sslmode={sslmode} sslrootcert={sslrootcert}".format(**conn_params)
 
@@ -57,7 +66,7 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}  # Allowed image file extensi
 # mysql=MySQL(app)
 
 conn=connect_to_database()
-# print(conn)
+print(conn)
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -246,7 +255,7 @@ def admin():
     cursor.close()
     return render_template('admin.html',user_data=user_data,user_num=user_num,image_num=image_num)
 
-from moviepy.editor import ImageSequenceClip, concatenate_videoclips, AudioFileClip
+# from moviepy.editor import ImageSequenceClip, concatenate_videoclips, AudioFileClip
 from PIL import Image
 import os
 

@@ -1,156 +1,70 @@
-from moviepy.editor import ImageSequenceClip, AudioFileClip, CompositeVideoClip, concatenate_videoclips
+from moviepy import ImageSequenceClip, AudioFileClip, CompositeVideoClip
 from PIL import Image
-import os
-import tempfile
-import shutil
+import os, tempfile, shutil, imageio
 from transitions import crossfadein, crossfadeout, slide_in, slide_out
-import imageio
 
-HEIGHT = 900
-WIDTH = 1600
+HEIGHT, WIDTH = 900, 1600
 
 def images_to_video(images_path, video_path, durations, transition_array, music_path, fps=1):
-    temp_folder = tempfile.mkdtemp()  # Create a temporary folder for resized images
-    
-    # Resize and convert images to JPEG format and save them in the temp folder
-
-    images = []
-
+    temp_folder = tempfile.mkdtemp()
+    processed_images = []
     for img_path in images_path:
         img = Image.open(img_path)
-        # Convert RGBA images to RGB
-        if img.mode == 'RGBA':
-            img = img.convert('RGB')
-        resized_img = img.resize((WIDTH, HEIGHT))
-        # Convert image to JPEG format
-        img_base_name = os.path.splitext(os.path.split(img_path)[1])[0]
-        images.append(os.path.split(img_path)[1])
-        jpeg_path = os.path.join(temp_folder, img_base_name + ".jpeg")
-        print(jpeg_path)
-        resized_img.save(jpeg_path, "JPEG")
+        if img.mode == 'RGBA': img = img.convert('RGB')
+        img = img.resize((WIDTH, HEIGHT))
+        base = os.path.splitext(os.path.basename(img_path))[0]
+        jpeg = os.path.join(temp_folder, base + ".jpeg")
+        img.save(jpeg, "JPEG")
+        processed_images.append(jpeg)
 
-    print(images)
+    clips = [ImageSequenceClip([p]*int(d*fps), fps=fps)
+             for p, d in zip(processed_images, durations)]
 
-    # Create ImageSequenceClip from the extended list of images
-    
-    totalTime = 0
-    # for img, duration in zip(images, durations):
-    #     img_base_name = os.path.splitext(img)[0]
-    #     totalTime += duration
-        # for _ in range(int(duration * fps)):
-        #     extended_images.append(os.path.join(temp_folder, img_base_name + ".jpeg")) 
+    final_clips = [clips[0].with_start(0)]
+    current_start = durations[0]
 
-    print(images)
+    for i in range(len(clips)-1):
+        current, nxt = clips[i], clips[i+1]
+        tr = transition_array[i] if i < len(transition_array) else 0
 
-    clips = []
-    for img, duration in zip(images, durations):
-        extended_images = []
-        img_base_name = os.path.splitext(img)[0]
-        for _ in range(int(duration * fps)):
-            print(os.path.join(temp_folder, img_base_name + ".jpeg"))
-            extended_images.append(os.path.join(temp_folder, img_base_name + ".jpeg"))
-        clip = ImageSequenceClip(extended_images, fps=fps)
-        # clip = clip.with_start(totalTime)
-        totalTime += duration
-        clips.append(clip)
+        if tr == 0:
+            final = CompositeVideoClip([current, nxt])
+        elif tr == 1:
+            current_fx = crossfadein(current, 1)
+            next_fx = crossfadeout(nxt, 1)
+            final = CompositeVideoClip([current_fx, next_fx])
+        elif 2 <= tr <= 5:
+            side = ["left","right","top","bottom"][tr-2]
+            nxt_fx = slide_in(nxt, 1, side)
+            final = CompositeVideoClip([current, nxt_fx])
+        elif tr == 6:
+            nxt_fx = slide_out(nxt, 1, "bottom")
+            final = CompositeVideoClip([current, nxt_fx])
+        else:
+            final = CompositeVideoClip([current, nxt])
 
-    # Create ImageSequenceClip from the extended list of images
-    # clip = ImageSequenceClip(extended_images, fps=fps)
+        final_clips.append(final.with_start(current_start))
+        current_start += durations[i+1]
 
-    print(clips)
-        
-    transition_index = 0
-    final_clips = []
+    composite = CompositeVideoClip(final_clips)
+    frame_folder = tempfile.mkdtemp()
+    frames = []
+    for idx, frame in enumerate(composite.iter_frames(fps=fps, dtype="uint8")):
+        path = os.path.join(frame_folder, f"f{idx:05d}.png")
+        imageio.imwrite(path, frame)
+        frames.append(path)
 
-    final_clips.append(clips[0].with_start(0))
+    video = ImageSequenceClip(frames, fps=fps).with_audio(AudioFileClip(music_path))
+    video = video.subclipped(0, sum(durations))
+    video.write_videofile(video_path)
 
-    print(durations)
-
-    duration = durations[0]
-
-    for i in range(len(clips) - 1):
-        print(i)
-        current_clip = clips[i]
-        next_clip = clips[i + 1]
-
-        final_clip = None
-
-        transition_type = transition_array[transition_index]
-
-        if transition_type == 0:  # None
-            final_clip = CompositeVideoClip([current_clip, next_clip])
-        elif transition_type == 1:  # Crossfade
-            final_clip = CompositeVideoClip([current_clip.fx(crossfadein, 1), next_clip.fx(crossfadeout, 1)])
-        elif transition_type == 2:  # Slide in left
-            final_clip = CompositeVideoClip([current_clip, next_clip.fx(slide_in, 1, "left")])
-        elif transition_type == 3:  # Slide in right
-            final_clip = CompositeVideoClip([current_clip, next_clip.fx(slide_in, 1, "right")])
-        elif transition_type == 4:  # Slide in top
-            final_clip = CompositeVideoClip([current_clip, next_clip.fx(slide_in, 1, "top")])
-        elif transition_type == 5:  # Slide in bottom
-            final_clip = CompositeVideoClip([current_clip, next_clip.fx(slide_in, 1, "bottom")])
-        elif transition_type == 6:  # Slide out bottom
-            final_clip = CompositeVideoClip([current_clip, next_clip.fx(slide_in, 1, "bottom")])
-        
-
-        final_clip = final_clip.with_start(duration)
-        duration += durations[i + 1]
-        final_clips.append(final_clip)
-
-        # final_clips = final_clips.subclip(0, totalTime)
-
-        transition_index += 1
+    shutil.rmtree(frame_folder)
+    shutil.rmtree(temp_folder)
 
 
-    # final_clips.append(clips[-1].subclip(0, durations[-1] / 2))
-
-
-    # # Load the background music
-    audio_clip = AudioFileClip(music_path)
-
-    # Create a single CompositeVideoClip from the list of final clips
-    composite_clip = CompositeVideoClip(final_clips)
-
-    print(clips)
-
-    # composite_clip = CompositeVideoClip(clips)
-
-    # Temporary folder to store frame images
-    temp_frame_folder = tempfile.mkdtemp()
-
-    # Save the frames as images in the temporary folder
-    frame_paths = []
-    for i, frame in enumerate(composite_clip.iter_frames(fps=fps)):
-        frame_path = os.path.join(temp_frame_folder, f"frame_{i:05d}.png")
-        imageio.imwrite(frame_path, frame)
-        frame_paths.append(frame_path)
-
-    # Create ImageSequenceClip from the list of frame images
-    print(frame_paths)
-    clip = ImageSequenceClip(frame_paths, fps=fps)
-
-    # Set the background music
-    clip = clip.with_audio(audio_clip)
-
-    # Trim the video to the required length
-    clip = clip.subclip(0, totalTime)
-
-    # Write the video file
-    clip.write_videofile(video_path)
-
-    # Clean up: delete the temporary folder and its contents
-    shutil.rmtree(temp_frame_folder)
-
-
-# Example usage
 if __name__ == "__main__":
-    image_folder = "static/images_dup"
-    video_path = "Output_Video.mp4"
-    music_path = "static/audio/sample.mp3" 
-    
-    # this is the duration in sec
-    durations = [4,4,4,4,4] 
-
-    transition_array = [2,6,4,5]
-    
-    images_to_video(image_folder, video_path, durations, music_path, transition_array, fps=10)
+    img_folder = "static/images_dup"
+    images = [os.path.join(img_folder, f) for f in sorted(os.listdir(img_folder))
+              if f.lower().endswith((".png",".jpg",".jpeg"))]
+    images_to_video(images, "Output_Video.mp4",
+                    [4,4,4,4,4], [2,6,4,5], "static/audio/sample.mp3", fps=10)
